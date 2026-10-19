@@ -39,6 +39,9 @@ src/main/java/com/cn/ShopMain.java
 src/main/java/com/cn/Shop.java
 src/main/java/com/cn/Product.java
 
+# ---------- 个人学习笔记（不入库）----------
+*学习笔记*.md
+
 # ---------- 系统 ----------
 .DS_Store
 Thumbs.db

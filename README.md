@@ -96,4 +96,3 @@ cp target/shop.war $CATALINA_HOME/webapps/
 
 - `_apifox/` —— 用 Node 脚本生成 Apifox / Postman 可直接导入的接口集合（52 个接口、全部带断言），以及回放校验脚本
 - `*回归测试.ps1` —— 品牌、图片、监听器、前台接口的回归脚本
-- `商品管理系统-Servlet版-学习笔记.md` —— 开发过程中的踩坑记录与设计说明
