@@ -1,0 +1,989 @@
+/* ==========================================================================
+   优选商城 · 前台样式
+   和后台（style.css）刻意分成两个文件 —— 它们的气质本来就不该一样：
+   后台是深色侧边栏 + 密集表格，给管理员干活用；
+   前台是浅色顶栏 + 商品卡片墙，让顾客挑东西。
+   结构：① 基础 ② 顶栏 ③ 筛选 ④ 商品卡片 ⑤ 详情 ⑥ 表格（购物车）
+        ⑦ 结算 ⑧ 订单 ⑨ 提示/分页/空状态 ⑩ 移动端（≤640px）
+   ========================================================================== */
+
+/* ---------- ① 基础 ---------- */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1f2937;
+    background: #f5f6f8;
+}
+
+a { color: #1f2937; text-decoration: none; }
+a:hover { color: #e1251b; text-decoration: none; }
+
+.m-wrap { max-width: 1140px; margin: 0 auto; padding-left: 18px; padding-right: 18px; }
+.m-main { padding-top: 20px; padding-bottom: 56px; }
+
+/* ---------- ② 顶栏 ---------- */
+
+.m-topbar {
+    background: #fff;
+    border-bottom: 1px solid #eceef1;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.m-topbar-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 62px;
+}
+
+.m-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #e1251b;
+    white-space: nowrap;
+}
+.m-brand:hover { color: #e1251b; }
+
+.m-logo {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #ff6a3d, #e1251b);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+
+.m-search { flex: 1; display: flex; max-width: 440px; }
+
+.m-search input {
+    flex: 1;
+    min-width: 0;
+    height: 36px;
+    padding: 0 15px;
+    border: 2px solid #e1251b;
+    border-right: none;
+    border-radius: 18px 0 0 18px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: #1f2937;
+    outline: none;
+}
+
+.m-search button {
+    height: 36px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 0 18px 18px 0;
+    background: #e1251b;
+    color: #fff;
+    font-size: 13.5px;
+    font-family: inherit;
+    cursor: pointer;
+}
+.m-search button:hover { background: #c41d15; }
+
+.m-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13.5px;
+    white-space: nowrap;
+    margin-left: auto;
+}
+.m-nav a { color: #374151; }
+.m-nav a:hover { color: #e1251b; }
+
+.m-cart-link { position: relative; }
+
+.m-badge {
+    position: absolute;
+    top: -9px;
+    right: -15px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: #e1251b;
+    color: #fff;
+    font-size: 11px;
+    line-height: 17px;
+    text-align: center;
+}
+
+.m-user { color: #9ca3af; }
+
+/* 后台入口。只给有后台权限的人显示（见 mall/layout-head.jsp）。
+   做成描边胶囊是为了跟普通导航分开 —— 它通向的是另一套界面，
+   点进去画风突变，先给个视觉提示。
+   选择器写成 .m-nav a.m-admin-link 是为了压过上面那条 .m-nav a 的颜色。 */
+.m-nav a.m-admin-link {
+    padding: 4px 11px;
+    border: 1px solid #f5c9c5;
+    border-radius: 999px;
+    color: #e1251b;
+    font-size: 12.5px;
+}
+.m-nav a.m-admin-link:hover {
+    background: #fdeceb;
+    color: #c41d14;
+}
+
+.m-foot {
+    border-top: 1px solid #eceef1;
+    background: #fff;
+    padding: 22px 0;
+    font-size: 12.5px;
+    color: #9ca3af;
+    text-align: center;
+}
+
+/* 页脚的「当前 N 人在逛」，数据来自 OnlineListener（见 Java 那边的注释）。
+   跟左边那句说明之间拉一条竖线 —— 不然连成一长串，读不出是两块信息。
+   数字用商城主色，是全页唯一会自己变化的地方，给点存在感。 */
+.m-online {
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid #e5e7eb;
+}
+
+.m-online b {
+    color: #e1251b;
+    font-weight: 600;
+}
+
+/* ---------- ③ 面包屑与筛选 ---------- */
+
+.m-crumb { font-size: 13px; color: #9ca3af; margin-bottom: 14px; }
+.m-crumb a { color: #6b7280; }
+.m-crumb a:hover { color: #e1251b; }
+.m-crumb .sep { margin: 0 6px; color: #d1d5db; }
+
+.m-filters {
+    background: #fff;
+    border: 1px solid #eceef1;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.m-filters .f { display: flex; flex-direction: column; gap: 5px; }
+.m-filters label { font-size: 12px; color: #6b7280; }
+
+.m-filters input,
+.m-filters select {
+    height: 34px;
+    padding: 0 11px;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: #1f2937;
+    background: #fff;
+    outline: none;
+}
+.m-filters input:focus,
+.m-filters select:focus { border-color: #e1251b; }
+.m-filters .f.wide input { min-width: 168px; }
+.m-filters .f.mid input { min-width: 92px; }
+
+/* ---------- 按钮（前台一套红色的） ---------- */
+
+.m-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 34px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 13.5px;
+    font-family: inherit;
+    line-height: 1.4;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.m-btn-primary { background: #e1251b; color: #fff; }
+.m-btn-primary:hover { background: #c41d15; color: #fff; }
+
+.m-btn-ghost { background: #fff; border-color: #dfe3e8; color: #374151; }
+.m-btn-ghost:hover { background: #f9fafb; color: #374151; }
+
+.m-btn-sm { height: 28px; padding: 0 11px; font-size: 12.5px; border-radius: 7px; }
+.m-btn-lg { height: 42px; padding: 0 26px; font-size: 15px; border-radius: 9px; }
+.m-btn-block { width: 100%; }
+.m-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ---------- ④ 商品卡片墙 ---------- */
+
+.m-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(206px, 1fr));
+    gap: 14px;
+}
+
+.m-card {
+    background: #fff;
+    border: 1px solid #eceef1;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow .15s, transform .15s, border-color .15s;
+}
+.m-card:hover {
+    box-shadow: 0 6px 18px rgba(17, 24, 39, .09);
+    transform: translateY(-2px);
+    border-color: #f3d3cf;
+}
+
+/* 没有真图片，用渐变色块 + 商品名首字当占位图。
+   好处是零资源、零请求；坏处是同一件商品每次刷新颜色可能不一样 ——
+   这里按卡片在列表里的位置岔开，至少同一屏内不会撞色。 */
+.m-thumb {
+    height: 138px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, .93);
+    background: linear-gradient(135deg, #ffb37a, #ff7a5c);
+    user-select: none;
+    overflow: hidden;
+}
+/* 那几种轮换的渐变底色，只在「没有真实图片」时才用。
+   给选择器加个 :not(.m-thumb-img)，就不必用 !important 去硬压 ——
+   靠选择器本身把「什么情况下用哪种样式」说清楚，比提高优先级干净。 */
+.m-card:nth-child(6n+2) .m-thumb:not(.m-thumb-img) { background: linear-gradient(135deg, #7fc4ff, #4a90e2); }
+.m-card:nth-child(6n+3) .m-thumb:not(.m-thumb-img) { background: linear-gradient(135deg, #9be3a8, #46b06a); }
+.m-card:nth-child(6n+4) .m-thumb:not(.m-thumb-img) { background: linear-gradient(135deg, #c6a7ff, #8b5cf6); }
+.m-card:nth-child(6n+5) .m-thumb:not(.m-thumb-img) { background: linear-gradient(135deg, #ffd479, #f5a623); }
+.m-card:nth-child(6n)   .m-thumb:not(.m-thumb-img) { background: linear-gradient(135deg, #8fdcd8, #14b8a6); }
+
+/* 有真实图片时的缩略图：让位给图片本身 */
+.m-thumb-img {
+    background: #f3f4f6;
+}
+.m-thumb-img img {
+    width: 100%;
+    height: 100%;
+    /* cover = 按短边铺满、裁掉多余部分。
+       用 contain 会留白边，用 fill 会把商品图拉变形 ——
+       商品图尤其不能变形，宁可裁掉一点边角。 */
+    object-fit: cover;
+    display: block;
+}
+
+.m-card-body {
+    padding: 11px 13px 13px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.m-name {
+    font-size: 14px;
+    line-height: 1.45;
+    height: 41px;
+    overflow: hidden;
+    color: #1f2937;
+}
+.m-name:hover { color: #e1251b; }
+
+.m-meta { font-size: 12px; color: #9ca3af; margin: 5px 0 9px; }
+
+.m-price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.m-price { color: #e1251b; font-size: 18px; font-weight: 600; }
+.m-price i { font-size: 12.5px; font-style: normal; margin-right: 1px; }
+
+.m-stock-warn { font-size: 11.5px; color: #c2410c; }
+.m-stock-out { font-size: 11.5px; color: #9ca3af; }
+
+.m-card-act { margin-top: 10px; }
+
+/* ---------- ⑤ 商品详情 ---------- */
+
+.m-detail {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 26px;
+    align-items: start;
+}
+
+@media (max-width: 820px) {
+    .m-detail { grid-template-columns: 1fr; }
+}
+
+.m-detail .m-thumb {
+    height: 330px;
+    border-radius: 12px;
+    font-size: 86px;
+}
+
+.m-detail-brand { font-size: 13px; color: #6b7280; }
+.m-detail h1 { margin: 6px 0 14px; font-size: 23px; font-weight: 600; }
+
+.m-detail-price {
+    background: #fff5f4;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+}
+.m-detail-price .p { color: #e1251b; font-size: 30px; font-weight: 600; line-height: 1.2; }
+.m-detail-price .p i { font-size: 16px; font-style: normal; margin-right: 2px; }
+.m-detail-price .s { font-size: 12.5px; color: #9ca3af; margin-top: 3px; }
+
+.m-attrs {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 8px 14px;
+    font-size: 13.5px;
+    margin-bottom: 20px;
+}
+.m-attrs .k { color: #9ca3af; }
+
+.m-qty input {
+    width: 66px;
+    height: 36px;
+    text-align: center;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1f2937;
+    outline: none;
+}
+.m-qty input:focus { border-color: #e1251b; }
+
+.m-buy-row { display: flex; gap: 10px; align-items: flex-end; margin-top: 6px; }
+
+.m-section-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 30px 0 14px;
+    padding-left: 10px;
+    border-left: 3px solid #e1251b;
+}
+
+/* ---------- ⑥ 面板与表格（购物车） ---------- */
+
+.m-panel {
+    background: #fff;
+    border: 1px solid #eceef1;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+
+.m-panel-head {
+    padding: 13px 18px;
+    border-bottom: 1px solid #f1f3f5;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.m-panel-body { padding: 16px 18px; }
+
+.m-tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+
+.m-tbl th {
+    text-align: left;
+    padding: 10px 14px;
+    background: #fafbfc;
+    color: #6b7280;
+    font-weight: 500;
+    font-size: 12.5px;
+    border-bottom: 1px solid #eceef1;
+    white-space: nowrap;
+}
+
+.m-tbl td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f4f5f7;
+    vertical-align: middle;
+}
+.m-tbl tbody tr:last-child td { border-bottom: none; }
+.m-tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+.m-tbl .subtotal { color: #e1251b; font-weight: 600; text-align: right; }
+.m-tbl .col-act { width: 1%; white-space: nowrap; }
+
+.m-goods { display: flex; align-items: center; gap: 11px; }
+
+.m-mini {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #ffb37a, #ff7a5c);
+    user-select: none;
+    overflow: hidden;
+}
+
+/* 购物车 / 结算页那一列小缩略图，有图时同样让位给图片 */
+.m-mini-img {
+    background: #f3f4f6;
+}
+.m-mini-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.m-qty-inline input {
+    width: 58px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid #dfe3e8;
+    border-radius: 7px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #1f2937;
+    outline: none;
+}
+.m-qty-inline input:focus { border-color: #e1251b; }
+
+.m-bad { color: #e1251b; font-size: 12px; }
+.m-row-actions { display: flex; gap: 6px; }
+.m-muted { color: #9ca3af; }
+
+.m-total-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 18px;
+    background: #fafbfc;
+    border-top: 1px solid #eceef1;
+}
+.m-total-bar .t { font-size: 13.5px; color: #6b7280; }
+.m-total-bar .t b { color: #e1251b; font-size: 22px; font-weight: 600; margin-left: 4px; }
+
+/* ---------- ⑦ 结算 ---------- */
+
+.m-checkout {
+    display: grid;
+    grid-template-columns: 1fr 330px;
+    gap: 18px;
+    align-items: start;
+}
+
+@media (max-width: 860px) {
+    .m-checkout { grid-template-columns: 1fr; }
+}
+
+.m-form-row { margin-bottom: 15px; }
+.m-form-row label { display: block; font-size: 12.5px; color: #4b5563; margin-bottom: 5px; }
+.m-form-row .req { color: #e1251b; }
+
+.m-form-row input,
+.m-form-row textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: #1f2937;
+    outline: none;
+}
+.m-form-row input:focus,
+.m-form-row textarea:focus { border-color: #e1251b; }
+
+.m-summary-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    font-size: 13.5px;
+    color: #4b5563;
+}
+.m-summary-line .v { font-variant-numeric: tabular-nums; }
+.m-summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 12px;
+    margin-top: 8px;
+    border-top: 1px dashed #e5e7eb;
+    font-size: 13.5px;
+    color: #6b7280;
+}
+.m-summary-total b { color: #e1251b; font-size: 22px; font-weight: 600; }
+
+/* ---------- ⑧ 订单 ---------- */
+
+.m-order {
+    background: #fff;
+    border: 1px solid #eceef1;
+    border-radius: 12px;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+
+.m-order-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 18px;
+    background: #fafbfc;
+    border-bottom: 1px solid #f1f3f5;
+    font-size: 13px;
+    color: #6b7280;
+    flex-wrap: wrap;
+}
+
+.m-order-no { color: #1f2937; font-weight: 600; }
+
+.m-order-lines { padding: 4px 18px; }
+
+.m-order-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px dashed #f1f3f5;
+    font-size: 13.5px;
+}
+.m-order-line:last-child { border-bottom: none; }
+.m-order-line .r { color: #6b7280; font-size: 13px; white-space: nowrap; }
+
+.m-order-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 18px;
+    border-top: 1px solid #f1f3f5;
+    background: #fcfcfd;
+    flex-wrap: wrap;
+}
+.m-order-foot .t { font-size: 13px; color: #6b7280; }
+.m-order-foot .t b { color: #e1251b; font-size: 17px; font-weight: 600; }
+
+.m-status {
+    display: inline-block;
+    padding: 1px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.7;
+}
+.m-status.warn  { background: #fff2e8; color: #c2410c; }
+.m-status.info  { background: #e8f1ff; color: #1d4ed8; }
+.m-status.ok    { background: #e7f7ed; color: #15803d; }
+.m-status.gray  { background: #f3f4f6; color: #6b7280; }
+
+/* ---------- ⑨ 提示 / 分页 / 空状态 ---------- */
+
+.m-flash {
+    padding: 11px 15px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    margin-bottom: 16px;
+}
+.m-flash-ok  { background: #e7f7ed; border: 1px solid #bbf0cc; color: #15803d; }
+.m-flash-err { background: #fef1f1; border: 1px solid #f9cccc; color: #b91c1c; }
+
+.m-warn-box {
+    background: #fff8f0;
+    border: 1px solid #ffe0bd;
+    color: #c2410c;
+    padding: 11px 15px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    margin-bottom: 16px;
+}
+
+.m-pager {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 22px;
+}
+
+.m-pager a,
+.m-pager span {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: #374151;
+    background: #fff;
+}
+.m-pager a:hover { border-color: #e1251b; color: #e1251b; }
+.m-pager .cur { background: #e1251b; border-color: #e1251b; color: #fff; }
+.m-pager .off { color: #d1d5db; background: #fafbfc; }
+.m-pager .info { border: none; background: none; color: #9ca3af; font-size: 12.5px; padding: 0 6px; }
+
+.m-empty {
+    background: #fff;
+    border: 1px solid #eceef1;
+    border-radius: 12px;
+    padding: 54px 20px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 13.5px;
+}
+.m-empty .big { display: block; font-size: 30px; margin-bottom: 10px; }
+.m-empty .m-btn { margin-top: 16px; }
+
+/* ==========================================================================
+   ⑩ 移动端（≤640px）
+   ==========================================================================
+
+   上一节为止的样式都是「给宽屏排的」。浏览器把同一份 CSS 交给窄屏时，
+   它只会照做——不会自动帮你把横向的东西竖过来。所以这一节要手动补。
+
+   断点取 640px：覆盖手机竖屏（360~430）一直到小平板竖屏。
+   再宽就交给 .m-grid 的 auto-fill 自己决定列数（第 ④ 节），不用管。
+
+   三条总原则，下面每条规则都归到其中之一：
+     ① 能换行就换行，别硬挤（顶栏、购买行、订单底栏）
+     ② 挤不下的表 → 拆成卡片，别让它横向溢出（购物车、结算清单）
+     ③ 手指不是鼠标：表单控件字号 ≥16px、可点区域 ≥40px
+
+   ⚠️ 千万不要在末尾补一句 overflow-x: hidden 去「兜住」溢出。
+   那是静默丢内容：页面看着正常，最右边的按钮已经没了（坑 20）。
+   溢出要在源头修，不是在出口堵。
+   ========================================================================== */
+
+/* 这些只在手机上用，桌面端一律不显示 —— 于是桌面端的行为和加这节之前
+   完全一致，这一点很重要：新样式只应该「在窄屏生效」，
+   而不是顺手把宽屏也改了。 */
+.m-filter-toggle,
+.m-filter-bar { display: none; }
+
+@media (max-width: 640px) {
+
+    /* ---------- 通用：留白收紧、手指尺寸放大 ---------- */
+
+    /* 左右留白 18 → 12。窄屏上一共才 390px，这 12px 值得省 */
+    .m-wrap { padding-left: 12px; padding-right: 12px; }
+    .m-main { padding-top: 14px; padding-bottom: 34px; }
+
+    /* 触摸目标统一拔高到 40px 上下。
+       40 是经验值：低于它，拇指点起来就开始互相误触。 */
+    .m-btn { height: 40px; font-size: 14px; padding: 0 14px; }
+    .m-btn-sm { height: 34px; font-size: 13px; }
+    .m-btn-lg { height: 46px; font-size: 15.5px; }
+
+    /* ---------- ② 顶栏：从「一条线」改成「两行」 ---------- */
+
+    /* 桌面版是「品牌 + 搜索 + 导航」并排的 62px 一条线。
+       窄屏下导航里那几个 white-space: nowrap 的链接收无可收
+       （光文字就 384px），整行被撑到 786px，把 body 一起撑宽，
+       导航整条落到屏幕外 —— 而购物车和登录入口恰好就在那条导航里。
+
+       改法是让它换行：第一行「品牌 + 搜索」，第二行导航横着滑。 */
+    .m-topbar-inner {
+        height: auto;
+        flex-wrap: wrap;
+        gap: 8px 10px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .m-brand { font-size: 16px; gap: 7px; }
+    .m-logo { width: 27px; height: 27px; font-size: 14px; }
+
+    /* 搜索框接管第一行剩下的全部宽度（桌面版它被 max-width: 440px 卡着） */
+    .m-search { flex: 1 1 120px; max-width: none; }
+    .m-search input,
+    .m-search button { height: 38px; font-size: 16px; }
+
+    /* 导航换到第二行。
+       flex-basis: 100% 在 wrap 容器里就等于「这行我包了」——强制折行。
+       第二行用横滑而不是再折成两行，是因为顶栏是 sticky 的，
+       每多一行就多吃掉屏幕里 30px 的正文空间。
+
+       padding-top 那 9px 是给购物车角标留的，不是随手加的：
+       overflow-x 一旦不是 visible，overflow-y 的计算值会被强制成 auto，
+       角标用 top: -9px 浮在链接上方，就会被这个滚动盒子裁掉。 */
+    .m-nav {
+        flex: 0 0 100%;
+        margin-left: 0;
+        gap: 15px;
+        padding: 9px 2px 3px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+    .m-nav::-webkit-scrollbar { display: none; }
+    .m-nav a { flex: 0 0 auto; }          /* 别把链接压瘦，让它撑开去滑 */
+    .m-badge { top: -7px; right: -8px; }
+
+    /* ---------- ③ 筛选条：两列 + 可折叠 ---------- */
+
+    /* 折叠开关（list.jsp 里那个 checkbox + label）只在手机上出现。
+       桌面端整块 display: none，行为和改之前一模一样。 */
+    .m-filter-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 42px;
+        padding: 0 14px;
+        margin-bottom: 12px;
+        background: #fff;
+        border: 1px solid #eceef1;
+        border-radius: 10px;
+        font-size: 14px;
+        color: #374151;
+        cursor: pointer;
+        user-select: none;
+    }
+    .m-filter-arrow { color: #9ca3af; transition: transform .15s; }
+    .m-filter-toggle:checked ~ .m-filter-bar .m-filter-arrow { transform: rotate(180deg); }
+
+    /* 没勾上就藏起来。
+       六个筛选项在手机上展开要占五、六行，一屏正文就这么没了 ——
+       而筛选是低频操作，默认收起来更合理。
+       （有筛选条件时 list.jsp 会把它默认置为勾选，见那边的注释） */
+    .m-filter-toggle:not(:checked) ~ .m-filters { display: none; }
+
+    /* 展开后排成两列，比桌面版的一长条省一半高度 */
+    .m-filters { padding: 13px; gap: 10px; }
+    .m-filters .f { flex: 1 1 calc(50% - 5px); }
+    .m-filters .f.wide { flex-basis: 100%; }   /* 关键字独占一行 */
+
+    /* 输入类控件统一 16px：iOS Safari 只要聚焦到字号 <16px 的控件，
+       就自动把整页放大一次，每点一下「嗡」一下，非常难受。
+       16px 是那条分界线，不是审美问题。 */
+    .m-filters input,
+    .m-filters select { width: 100%; height: 38px; font-size: 16px; }
+    .m-filters .f.wide input,
+    .m-filters .f.mid input { min-width: 0; }  /* 桌面版给它们定了 min-width，窄屏得放开 */
+    .m-filters .m-btn { flex: 1 1 calc(50% - 5px); }
+
+    /* ---------- ④ 商品卡片墙：锁定两列 ---------- */
+
+    /* 桌面版是 auto-fill minmax(206px, 1fr)：390px 下只算得出一列，
+       而且卡片被拉到 354px 宽 —— 一屏一件商品，图还特别扁。
+       手机电商基本都是两列，一屏能扫到 4 件。 */
+    .m-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .m-thumb { height: 118px; font-size: 30px; }
+    .m-card-body { padding: 9px 10px 10px; }
+    .m-name { font-size: 13px; }
+    .m-meta { font-size: 11.5px; margin: 4px 0 7px; }
+    .m-price { font-size: 16px; }
+    .m-price i { font-size: 11.5px; }
+
+    /* ---------- ⑤ 商品详情 ---------- */
+
+    /* 这里原本就有 820px 的断点（把两栏压成一栏），
+       手机上再收一收尺寸就行，不用重排。 */
+    .m-detail { gap: 16px; }
+    .m-detail .m-thumb { height: 240px; font-size: 64px; }
+    .m-detail h1 { font-size: 19px; margin: 5px 0 12px; }
+    .m-detail-price { padding: 12px 14px; margin-bottom: 14px; }
+    .m-detail-price .p { font-size: 26px; }
+    .m-attrs { grid-template-columns: 76px 1fr; font-size: 13px; margin-bottom: 16px; }
+
+    /* 数量框 + 「加入购物车」并排一行，「去购物车结算」被挤下一行占满。
+       flex-wrap + 各自的 basis 就够了，不用去改 HTML 结构。 */
+    .m-buy-row { flex-wrap: wrap; gap: 9px; }
+    .m-buy-row .m-qty { flex: 0 0 88px; }
+    .m-qty input { width: 100%; height: 40px; font-size: 16px; }
+    .m-buy-row .m-btn-primary { flex: 1 1 0; }
+    .m-buy-row .m-btn-ghost { flex: 1 1 100%; }
+
+    .m-section-title { font-size: 14.5px; margin: 22px 0 12px; }
+
+    /* ---------- ⑥ 表格 → 卡片（购物车） ---------- */
+
+    /* 这是最容易被漏掉的一处：桌面版靠 <table> 排五列，
+       手机宽度下表格的最小内容宽度是 418px，
+       外层 .m-panel 又设了 overflow: hidden ——
+       于是最右边那 64px（正好是「操作」列）被静默裁掉，
+       连滚动条都不给，页面上看不出任何异常。
+
+       改法不是让它横滑，而是**把每一行摊成一张小卡片**：
+       表头隐藏，td 全部变成块级元素，再用 grid 摆位置。 */
+    .m-tbl-cart thead { display: none; }
+    .m-tbl-cart,
+    .m-tbl-cart tbody { display: block; }
+
+    .m-tbl-cart tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 9px 10px;
+        padding: 13px 14px;
+        border-bottom: 1px solid #f4f5f7;
+    }
+    .m-tbl-cart tr:last-child { border-bottom: none; }
+
+    .m-tbl-cart td { display: block; padding: 0; border: none; text-align: left; }
+    .m-tbl-cart td.subtotal { text-align: left; }   /* 桌面版它是右对齐的 */
+
+    /* 必须点名 .col-act，光写 .m-tbl-cart td { width: auto } 盖不住。
+       CSS 优先级比的是「选择器有多具体」：
+         桌面版  .m-tbl .col-act   = 两个类            → (0,2,0)
+         弱规则  .m-tbl-cart td    = 一个类一个元素     → (0,1,1)  ✗ 输
+         强规则  .m-tbl-cart td.col-act = 两个类一个元素 → (0,2,1)  ✓ 赢
+       盖不住的症状特别隐蔽：这一格被压成 1px 宽，里面的「删除」按钮
+       溢出到屏幕外，再被 .m-panel 的 overflow: hidden 裁掉 ——
+       绕了一圈，问题还是「操作列看不见」，而且页面上完全没有报错。
+       （这一条是量出来的：td.col-act 的盒子 1px，里面的按钮 56px。） */
+    .m-tbl-cart td.col-act { width: auto; }
+
+    /* 第一行：缩略图 + 商品名，横跨两列 */
+    .m-tbl-cart td:nth-child(1) { grid-column: 1 / -1; }
+    /* 第二行：单价（左） · 数量输入框（右） */
+    .m-tbl-cart td:nth-child(2) { grid-column: 1; grid-row: 2; align-self: center; }
+    .m-tbl-cart td:nth-child(3) { grid-column: 2; grid-row: 2; justify-self: end; }
+    /* 第三行：小计（左） · 删除（右） */
+    .m-tbl-cart td:nth-child(4) { grid-column: 1; grid-row: 3; align-self: center; }
+    .m-tbl-cart td:nth-child(5) { grid-column: 2; grid-row: 3; justify-self: end; }
+
+    /* 摊平之后没了表头，光一个 ¥59.00 看不出是单价还是小计。
+       用 ::before 补一个字，只影响显示，不动 HTML。 */
+    .m-tbl-cart td:nth-child(2)::before { content: "单价 "; }
+    .m-tbl-cart td:nth-child(4)::before { content: "小计 "; }
+
+    .m-qty-inline input { width: 66px; height: 40px; font-size: 16px; }
+
+    .m-panel-head { padding: 12px 14px; font-size: 14.5px; }
+    .m-panel-body { padding: 14px; }
+
+    /* 合计栏原本是「左边金额、右边两个按钮」并排，窄屏下改成上下两段 */
+    .m-total-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 11px;
+        padding: 14px;
+    }
+    .m-total-bar .t { text-align: center; font-size: 14px; }
+    .m-total-bar .m-btn { flex: 1; }          /* 「继续挑选」和「去结算」各占一半 */
+
+    /* ---------- ⑦ 结算页的清单表：同样卡片化，但只有四列 ---------- */
+
+    .m-tbl-mini thead { display: none; }
+    .m-tbl-mini,
+    .m-tbl-mini tbody { display: block; }
+
+    .m-tbl-mini tr {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 7px 8px;
+        padding: 12px 14px;
+        border-bottom: 1px solid #f4f5f7;
+    }
+    .m-tbl-mini tr:last-child { border-bottom: none; }
+    .m-tbl-mini td { display: block; padding: 0; border: none; text-align: left; width: auto; }
+
+    .m-tbl-mini td:nth-child(1) { grid-column: 1 / -1; }         /* 商品 */
+    .m-tbl-mini td:nth-child(2) { grid-column: 1; grid-row: 2; }  /* 单价 */
+    .m-tbl-mini td:nth-child(3) { grid-column: 2; grid-row: 2; }  /* × 数量 */
+    .m-tbl-mini td:nth-child(4) { grid-column: 3; grid-row: 2; text-align: right; }
+    .m-tbl-mini td:nth-child(4)::before { content: "小计 "; }
+
+    .m-form-row input,
+    .m-form-row textarea { font-size: 16px; padding: 11px 12px; }
+
+    /* ---------- ⑧ 订单卡片 ---------- */
+
+    /* 订单头是「订单号+时间」和「状态」两端对齐，窄屏直接上下摞 */
+    .m-order-head { padding: 11px 14px; }
+    .m-order-lines { padding: 2px 14px; }
+
+    /* 单行商品：桌面版是「名称 …… 金额」两端对齐，
+       窄屏下名称一长就把金额挤成竖排，所以改成上下两行。 */
+    .m-order-line {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1px;
+        padding: 9px 0;
+    }
+    .m-order-line .r { white-space: normal; }
+
+    .m-order-foot {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px 14px;
+    }
+    .m-order-foot > div:last-child { justify-content: space-between; }
+
+    /* ---------- ⑨ 提示 / 分页 / 空状态 ---------- */
+
+    .m-flash, .m-warn-box { font-size: 13.5px; padding: 10px 13px; }
+
+    /* 页码按钮排得下就排，排不下让「共 N 件」自己换到下一行，
+       不要让它把页码挤成两半。 */
+    .m-pager { gap: 5px; margin-top: 18px; }
+    .m-pager a,
+    .m-pager span { min-width: 30px; height: 34px; padding: 0 9px; font-size: 13px; }
+    .m-pager .info { flex: 1 1 100%; text-align: center; padding: 2px 0 0; }
+
+    .m-empty { padding: 42px 16px; }
+
+    /* 页脚那句「当前 N 人在逛」在窄屏会跟说明文字挤成两截，
+       单独起一行反而清爽 */
+    .m-foot { padding: 16px 0; line-height: 1.9; }
+    .m-online {
+        display: block;
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+    }
+}
+
+/* ---------- 触屏设备：取消 hover 效果 ---------- */
+
+/* 手机没有鼠标，:hover 会「粘」在最后一次点过的地方 ——
+   点完「加入购物车」，那张卡片就永远保持抬起的状态，像坏了。
+   用 (hover: none) 判定真正的触屏，比按宽度猜准。 */
+@media (hover: none) {
+    .m-card:hover {
+        box-shadow: none;
+        transform: none;
+        border-color: #eceef1;
+    }
+}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  web.xml —— Web 应用的"户口本"
+
+  Servlet 3.0 之后，Servlet / Filter 可以用 @WebServlet、@WebFilter 注解注册，
+  所以这里不用再一个个写 <servlet> 标签了。web.xml 只保留"注解管不了"的全局配置。
+
+  注意：这里没有写 metadata-complete="true"，
+  一旦写了 true，Tomcat 就会忽略所有注解 —— 那 @WebServlet 就全失效了。
+-->
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_1.xsd"
+         version="6.1">
+
+    <display-name>商品管理系统</display-name>
+
+    <!--
+      商品图片存在哪个目录（由 Uploads.java 读取，ImageServlet 从这里发图）
+
+      为什么要单独配一个「WAR 外面」的目录？
+        本项目的部署方式是：删掉整个 webapps/shop，再解开新的 war。
+        图片要是放在 war 里面（比如 webapps/shop/uploads），
+        每次重新部署都会连图片一起删掉 —— 数据不能跟着代码走。
+
+      换台电脑跑的话，这一行要改成新机器上的实际路径。
+    -->
+    <context-param>
+        <param-name>uploadDir</param-name>
+        <param-value>D:/workpace/Calculator/shop-data/uploads</param-value>
+    </context-param>
+
+    <!-- 访问 /shop/ 时默认打开哪个页面 -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- 会话 30 分钟不活动就失效 -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+
+        <!--
+          只用 Cookie 跟踪会话，关掉「往 URL 里塞 jsessionid」那套兜底方案。
+
+          为什么必须关？Tomcat 默认会在「客户端还没证明自己支持 Cookie」时，
+          把 session id 拼进页面里的每个链接，变成这样：
+
+              /shop/login;jsessionid=FDCC15D2F2E172E1B1ECBA05277F2C09?redirect=/mall
+
+          看着只是难看，其实有两个真问题：
+            ① 用户把这串链接复制发给别人，等于把会话一起送出去了
+            ② 地址栏、浏览器历史、Referer 请求头里都会留下 session id
+
+          把 tracking-mode 定成 COOKIE，Tomcat 就不再往 URL 里写它。
+          代价是：万一用户禁用了 Cookie，会话就维持不住 ——
+          现代浏览器默认都开着，这个代价可以接受。
+        -->
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+</web-app>

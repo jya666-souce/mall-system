@@ -1,0 +1,645 @@
+/* ==========================================================================
+   商品管理系统 · 后台样式
+   结构：① 基础  ② 布局（侧边栏/顶栏）  ③ 卡片与统计  ④ 表格  ⑤ 表单/按钮
+        ⑥ 分页/徽章/提示  ⑦ 登录页与 403
+   ========================================================================== */
+
+/* ---------- ① 基础 ---------- */
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #0f172a;
+    background: #f1f5f9;
+}
+
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 12.5px;
+    background: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: #334155;
+}
+
+/* ---------- ② 布局 ---------- */
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 212px;
+    flex: 0 0 212px;
+    background: #1e293b;
+    display: flex;
+    flex-direction: column;
+}
+
+.brand {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    flex: 0 0 56px;
+}
+
+.brand .logo {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: #2563eb;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex: 0 0 26px;
+}
+
+.brand .name { font-size: 14px; font-weight: 500; }
+
+.nav { padding: 10px 0; flex: 1; }
+
+.nav-title {
+    padding: 14px 18px 6px;
+    font-size: 11px;
+    color: #64748b;
+    letter-spacing: .5px;
+}
+
+.nav-item {
+    display: block;
+    padding: 9px 18px;
+    color: #cbd5e1;
+    font-size: 13.5px;
+    border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, .06);
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav-item.active {
+    background: rgba(37, 99, 235, .18);
+    border-left-color: #2563eb;
+    color: #fff;
+}
+
+.nav-foot {
+    padding: 12px 18px;
+    font-size: 11.5px;
+    color: #475569;
+    border-top: 1px solid rgba(255, 255, 255, .06);
+}
+
+.main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    height: 56px;
+    flex: 0 0 56px;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+    gap: 16px;
+}
+
+.crumb { font-size: 13px; color: #94a3b8; }
+.crumb .sep { margin: 0 7px; color: #cbd5e1; }
+.crumb .cur { color: #0f172a; }
+
+.userbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #475569;
+}
+
+.avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #e0e7ff;
+    color: #3730a3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex: 0 0 28px;
+}
+
+.content { padding: 20px 22px 40px; }
+
+.page-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.page-head h1 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.page-head .desc {
+    margin: 3px 0 0;
+    font-size: 12.5px;
+    color: #94a3b8;
+}
+
+/* ---------- ③ 卡片与统计 ---------- */
+
+.card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.card-head {
+    padding: 13px 18px;
+    border-bottom: 1px solid #eef2f7;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.card-head h2 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.card-body { padding: 18px; }
+.card-body.tight { padding: 12px 18px; }
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.stat {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 15px 17px;
+}
+
+.stat .label { font-size: 12.5px; color: #64748b; }
+.stat .value { font-size: 23px; font-weight: 500; margin-top: 5px; }
+.stat .sub { font-size: 11.5px; color: #94a3b8; margin-top: 3px; }
+.stat.accent .value { color: #2563eb; }
+.stat.warn .value { color: #b45309; }
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 84px 1fr 44px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 11px;
+    font-size: 13px;
+}
+
+.bar-row:last-child { margin-bottom: 0; }
+.bar-row .bar-name { color: #475569; }
+.bar-row .bar-num { text-align: right; color: #64748b; font-size: 12.5px; }
+
+.bar-track {
+    height: 8px;
+    background: #eef2f7;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: #2563eb;
+    border-radius: 4px;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+}
+
+@media (max-width: 980px) {
+    .two-col { grid-template-columns: 1fr; }
+}
+
+/* ---------- ④ 表格 ---------- */
+
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.tbl th {
+    text-align: left;
+    padding: 9px 14px;
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 500;
+    font-size: 12.5px;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.tbl td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.tbl tbody tr:hover td { background: #f8fafc; }
+.tbl tbody tr:last-child td { border-bottom: none; }
+
+.tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+.tbl .price { font-weight: 500; }
+.tbl .muted { color: #94a3b8; }
+.tbl .col-check { width: 36px; }
+.tbl .col-act { width: 1%; white-space: nowrap; }
+
+/* 商品缩略图。
+   宽高必须写死：不写的话，有图的格子会被图片的原始尺寸撑开，
+   表格就变成一行高一行矮，看着很乱。 */
+.tbl .col-img { width: 58px; }
+.tbl .thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;          /* 铺满再裁掉多余的，商品图绝不能被拉变形 */
+    display: block;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+}
+/* 没传图的商品：灰底 + 商品名首字。
+   表格里最忌讳出现空洞 —— 一行少一块，看着像页面坏了。 */
+.tbl .thumb-none {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #94a3b8;
+    user-select: none;
+}
+
+.row-actions { display: flex; gap: 6px; }
+
+.empty {
+    text-align: center;
+    padding: 44px 16px;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+/* ---------- ⑤ 表单与按钮 ---------- */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    font-size: 13px;
+    font-family: inherit;
+    line-height: 1.4;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn:hover { text-decoration: none; }
+
+.btn-primary { background: #2563eb; color: #fff; }
+.btn-primary:hover { background: #1d4ed8; }
+
+.btn-ghost { background: #fff; border-color: #cbd5e1; color: #334155; }
+.btn-ghost:hover { background: #f8fafc; }
+
+.btn-danger { background: #dc2626; color: #fff; }
+.btn-danger:hover { background: #b91c1c; }
+
+.btn-sm { padding: 4px 9px; font-size: 12.5px; border-radius: 6px; }
+.btn-block { width: 100%; }
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.filters .f {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filters .f label { font-size: 12px; color: #64748b; }
+
+.filters .f input,
+.filters .f select {
+    width: auto;
+    min-width: 118px;
+}
+
+.filters .f.wide input { min-width: 168px; }
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 18px;
+}
+
+@media (max-width: 760px) {
+    .form-grid { grid-template-columns: 1fr; }
+}
+
+.form-row { margin-bottom: 15px; }
+.form-row.span2 { grid-column: 1 / -1; }
+
+.form-row label {
+    display: block;
+    font-size: 12.5px;
+    color: #475569;
+    margin-bottom: 5px;
+}
+
+.form-row .req { color: #dc2626; }
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: #0f172a;
+    background: #fff;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 6px;
+}
+
+.help {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 5px;
+    line-height: 1.65;
+}
+
+/* 商品表单里「其他」那个品牌手输框。
+   平时是 disabled 的（禁用态直接藏起来，界面更干净），
+   选中「其他（自己输入）」之后 JS 把 disabled 摘掉，它才冒出来。 */
+.brand-custom { margin-top: 8px; }
+.brand-custom:disabled { display: none; }
+
+/* ---------- 表单里的「当前商品图片」预览 ---------- */
+
+.img-now {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 9px;
+    padding: 9px 11px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+}
+.img-now img {
+    width: 76px;
+    height: 76px;
+    border-radius: 8px;
+    object-fit: cover;
+    display: block;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+}
+
+/* 选择器写成 .form-row .img-del 而不是光 .img-del ——
+   因为上面已经有 .form-row label { display:block; margin-bottom:5px },
+   那条的特异性比单独一个类名高，不写全就被它压住了。 */
+.form-row .img-del {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    font-size: 12.5px;
+    color: #dc2626;
+    cursor: pointer;
+}
+.form-row .img-del input {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* ---------- ⑥ 分页 / 徽章 / 提示 ---------- */
+
+.pager {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.pager a, .pager span {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    font-size: 13px;
+    color: #334155;
+    background: #fff;
+}
+
+.pager a:hover { background: #f8fafc; text-decoration: none; }
+.pager .cur { background: #2563eb; border-color: #2563eb; color: #fff; }
+.pager .off { color: #cbd5e1; background: #f8fafc; }
+.pager .info { border: none; background: none; color: #94a3b8; font-size: 12.5px; padding: 0 6px; }
+
+.badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.badge-ok     { background: #dcfce7; color: #166534; }
+.badge-warn   { background: #fef3c7; color: #92400e; }
+.badge-danger { background: #fee2e2; color: #991b1b; }
+.badge-info   { background: #e0e7ff; color: #3730a3; }
+.badge-gray   { background: #f1f5f9; color: #475569; }
+
+.flash {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.flash-ok  { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+.flash-err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+
+/* 行内编辑：平时看着像纯文本，点「编辑」才变成输入框 */
+.inline-edit {
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 5px 7px;
+    border-radius: 6px;
+}
+
+.inline-edit:hover { border-color: #e2e8f0; background: #fff; }
+
+/* ---------- ⑦ 登录页与 403 ---------- */
+
+.login-body {
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.login-card {
+    width: 372px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 30px 28px;
+}
+
+.login-card h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.login-card .sub {
+    margin: 6px 0 18px;
+    font-size: 12.5px;
+    color: #94a3b8;
+    text-align: center;
+}
+
+.login-card label {
+    display: block;
+    font-size: 12.5px;
+    color: #475569;
+    margin-bottom: 5px;
+}
+
+.login-card input {
+    margin-bottom: 14px;
+}
+
+.login-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 7px;
+    margin-bottom: 14px;
+}
+
+.login-card .tip {
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 12.5px;
+    color: #94a3b8;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.login-card .tip b { color: #0f172a; font-size: 12px; }
+
+/* 点一下自动填账号 */
+.login-card .tip .fill {
+    cursor: pointer;
+    padding: 3px 6px;
+    margin: 0 -6px;
+    border-radius: 5px;
+}
+
+.login-card .tip .fill:hover { background: #eef2ff; }
+
+.error-card { text-align: center; }
+.error-card .badge-num { font-size: 34px; line-height: 1; color: #dc2626; font-weight: 500; }
+.error-card h1 { margin: 12px 0 6px; font-size: 18px; }
+.error-card .sub { margin-bottom: 16px; line-height: 1.7; }
+.error-card .hint {
+    font-size: 12.5px;
+    color: #64748b;
+    background: #f8fafc;
+    padding: 10px 13px;
+    border-radius: 7px;
+    text-align: left;
+    margin: 0 0 18px;
+}
+
+.role-tag {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 5px;
+    font-size: 12px;
+    background: #e0e7ff;
+    color: #3730a3;
+}

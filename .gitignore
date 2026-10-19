@@ -1,0 +1,45 @@
+# ---------- 构建产物 ----------
+target/
+out/
+build/
+*.class
+*.war
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# ---------- IDE ----------
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# ---------- 调试素材 / 运行数据（体积大，不入库）----------
+_shots/
+_imgtest/
+shop-data/
+*.log
+*.zip
+
+# Apifox 工具的中间产物（夹具快照、临时端口、回放结果）
+_apifox/_port.txt
+_apifox/_fixture-*.html
+_apifox/verify-live-result.txt
+
+# ---------- 不属于本项目的练习代码 ----------
+# 乘法表练习、RBAC 学生管理系统、空类，以及控制台版商品管理（Scanner）
+src/main/java/com/jya/
+src/main/java/com/stud/
+src/main/java/com/wsy/
+src/main/java/com/cn/ShopMain.java
+src/main/java/com/cn/Shop.java
+src/main/java/com/cn/Product.java
+
+# ---------- 系统 ----------
+.DS_Store
+Thumbs.db
+desktop.ini

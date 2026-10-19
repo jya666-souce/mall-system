@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jya</groupId>
+    <artifactId>Calculator</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <!-- ★ 关键改动：jar → war
+         jar 是普通 Java 程序（入口是 main 方法）
+         war 是 Web 应用包，按 WEB-INF 目录规范组织，交给 Tomcat 部署 -->
+    <packaging>war</packaging>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 本机 Tomcat 11.0.26，对应 Servlet 6.1 -->
+        <servlet.version>6.1.0</servlet.version>
+    </properties>
+
+    <dependencies>
+
+        <!-- ========== 1. Servlet API ==========
+             scope=provided 意思是"编译时我要用，但别打进 war"。
+             因为 Tomcat 自己的 lib/servlet-api.jar 里已经有这个包，
+             打进去会冲突（同一个类被两个类加载器加载）。
+             这是 WAR 部署最经典的一个坑。 -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- JSP API 同样由 Tomcat 的 jasper 提供，不打进 war -->
+        <dependency>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <version>3.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ========== 2. JSTL 标签库 ==========
+             JSTL 不属于 Servlet 规范，Tomcat 不自带，
+             所以这个必须打进 war 的 WEB-INF/lib/ 里 -->
+        <dependency>
+            <groupId>jakarta.servlet.jsp.jstl</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+            <version>3.0.0</version>
+            <exclusions>
+                <!-- EL API 是从这个 jar 传递进来的（不是从下面那个实现 jar）。
+                     排除掉，改用下面显式声明成 provided 的那份。 -->
+                <exclusion>
+                    <groupId>jakarta.el</groupId>
+                    <artifactId>jakarta.el-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+        <!-- EL 表达式引擎 API：Tomcat 的 lib/el-api.jar 已经自带（EL 6.0）。
+             这里显式声明并标成 provided，是为了"顶掉"上面 JSTL 捎带进来的
+             5.0 传递依赖 —— 两套 EL 同时躺在 WEB-INF/lib 里，
+             哪个先被类加载器加载是不确定的，会埋雷。
+             provided = 只用来编译，不打进 war。 -->
+        <dependency>
+            <groupId>jakarta.el</groupId>
+            <artifactId>jakarta.el-api</artifactId>
+            <version>5.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ========== 3. JDBC 驱动（学生管理系统 JdbcDemo 用，顺手保留） ========== -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>9.3.0</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <!-- war 包名 → 访问路径。shop.war 部署后就是 http://localhost:8080/shop/ -->
+        <finalName>shop</finalName>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>17</release>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- war 打包插件：把 src/main/webapp + class 文件 + 依赖 jar 合成 war -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
