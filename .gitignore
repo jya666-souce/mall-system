@@ -29,6 +29,7 @@ shop-data/
 _apifox/_port.txt
 _apifox/_fixture-*.html
 _apifox/verify-live-result.txt
+_apifox/*.md
 
 # ---------- 不属于本项目的练习代码 ----------
 # 乘法表练习、RBAC 学生管理系统、空类，以及控制台版商品管理（Scanner）
